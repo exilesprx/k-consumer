@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Event;
+use App\EventListeners\ExternalUserEventListener;
+use App\Events\External\UserCreated;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -20,6 +21,10 @@ class EventServiceProvider extends ServiceProvider
         ],
     ];
 
+    protected $subscribe = [
+        ExternalUserEventListener::class
+    ];
+
     /**
      * Register any events for your application.
      *
@@ -30,5 +35,13 @@ class EventServiceProvider extends ServiceProvider
         parent::boot();
 
         //
+    }
+
+    public function register()
+    {
+        $this->app->bind(
+            'user.created',
+            UserCreated::class
+        );
     }
 }
